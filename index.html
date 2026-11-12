@@ -2,7 +2,8 @@
 <html lang="pt-BR">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+<meta name="theme-color" content="#ffffff">
 <title>bagre</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -18,15 +19,18 @@
     --mono: "Geist Mono", ui-monospace, Menlo, Consolas, monospace;
   }
 
-
   * { box-sizing: border-box; }
-
 
   html, body {
     height: 100%;
     margin: 0;
+    overscroll-behavior: none;
   }
 
+  html {
+    -webkit-text-size-adjust: 100%;
+    -webkit-tap-highlight-color: transparent;
+  }
 
   body {
     background: var(--bg);
@@ -34,8 +38,24 @@
     font: 400 12px/1.4 var(--sans);
     -webkit-font-smoothing: antialiased;
     overflow: hidden;
+    position: fixed;
+    inset: 0;
+    touch-action: none;
+    -webkit-user-select: none;
+    user-select: none;
+    -webkit-touch-callout: none;
   }
 
+  .probe {
+    position: fixed;
+    left: 0;
+    top: 0;
+    width: 0;
+    height: env(safe-area-inset-bottom, 0px);
+    padding-top: env(safe-area-inset-top, 0px);
+    visibility: hidden;
+    pointer-events: none;
+  }
 
   .stage {
     position: relative;
@@ -43,7 +63,6 @@
     height: 100svh;
     cursor: pointer;
   }
-
 
   .stage video {
     display: block;
@@ -53,7 +72,6 @@
     pointer-events: none;
   }
 
-
   #scene {
     position: fixed;
     inset: 0;
@@ -62,7 +80,6 @@
     z-index: 1;
     pointer-events: none;
   }
-
 
   .panel {
     position: fixed;
@@ -76,13 +93,11 @@
     z-index: 10;
   }
 
-
   .panel-inner {
     position: relative;
     z-index: 3;
     pointer-events: auto;
   }
-
 
   .handle {
     display: flex;
@@ -94,9 +109,7 @@
     touch-action: none;
   }
 
-
   .handle.grabbing { cursor: grabbing; }
-
 
   .grip {
     display: grid;
@@ -104,14 +117,12 @@
     gap: 3px;
   }
 
-
   .grip i {
     width: 3px;
     height: 3px;
     border-radius: 50%;
     background: var(--dim);
   }
-
 
   .title {
     flex: 1;
@@ -121,14 +132,12 @@
     color: var(--dim);
   }
 
-
   .collapse {
     position: relative;
     width: 22px;
     height: 22px;
     border-radius: 50%;
   }
-
 
   .collapse span {
     position: absolute;
@@ -141,12 +150,9 @@
     background: currentColor;
   }
 
-
   .collapse span + span { transform: rotate(90deg) scaleX(0); }
 
-
   .wrap { overflow: hidden; }
-
 
   .body {
     display: grid;
@@ -154,6 +160,14 @@
     padding: 2px 18px 16px;
   }
 
+  @media (max-width: 480px) {
+    .panel { width: 248px; }
+    .body { gap: 12px; padding: 2px 16px 14px; }
+    .row { gap: 10px; }
+    .slider, input[type=range] { height: 28px; }
+    .btn { height: 36px; }
+    input[type=range]::-webkit-slider-thumb { width: 18px; height: 18px; margin-top: -8px; }
+  }
 
   .row {
     display: grid;
@@ -162,7 +176,6 @@
     gap: 12px;
   }
 
-
   .row label {
     font: 500 11px/1 var(--mono);
     text-transform: uppercase;
@@ -170,9 +183,7 @@
     transition: color .3s;
   }
 
-
   .row.on label { color: var(--fg); }
-
 
   .row output {
     text-align: right;
@@ -182,15 +193,12 @@
     transition: color .3s;
   }
 
-
   .row.on output { color: var(--fg); }
-
 
   .slider {
     position: relative;
     height: 20px;
   }
-
 
   .slider::before {
     content: "";
@@ -203,8 +211,8 @@
     background: var(--faint);
   }
 
-
   input[type=range] {
+    touch-action: none;
     --a: 50%;
     --b: 50%;
     position: relative;
@@ -217,7 +225,6 @@
     cursor: pointer;
   }
 
-
   input[type=range]::-webkit-slider-runnable-track {
     height: 2px;
     border-radius: 2px;
@@ -226,7 +233,6 @@
       var(--fg) var(--b), var(--faint) var(--b));
   }
 
-
   input[type=range]::-moz-range-track {
     height: 2px;
     border-radius: 2px;
@@ -234,7 +240,6 @@
       var(--faint) var(--a), var(--fg) var(--a),
       var(--fg) var(--b), var(--faint) var(--b));
   }
-
 
   input[type=range]::-webkit-slider-thumb {
     -webkit-appearance: none;
@@ -248,7 +253,6 @@
     transition: transform .25s cubic-bezier(.3, 1.6, .5, 1);
   }
 
-
   input[type=range]::-moz-range-thumb {
     width: 12px;
     height: 12px;
@@ -259,13 +263,11 @@
     transition: transform .25s cubic-bezier(.3, 1.6, .5, 1);
   }
 
-
   input[type=range]:hover::-webkit-slider-thumb { transform: scale(1.15); }
   input[type=range]:active::-webkit-slider-thumb { transform: scale(1.4); }
   input[type=range]:hover::-moz-range-thumb { transform: scale(1.15); }
   input[type=range]:active::-moz-range-thumb { transform: scale(1.4); }
   input[type=range]:focus { outline: none; }
-
 
   .foot {
     display: grid;
@@ -273,7 +275,6 @@
     gap: 8px;
     padding-top: 4px;
   }
-
 
   button {
     background: none;
@@ -285,9 +286,7 @@
     transition: color .2s, background-color .2s;
   }
 
-
   button:hover, button:focus-visible { color: var(--fg); outline: none; }
-
 
   .btn {
     height: 32px;
@@ -297,19 +296,17 @@
     overflow: hidden;
   }
 
-
   .btn:hover { background: rgba(0, 0, 0, 0.09); }
-
 
   .btn span { display: inline-block; }
 </style>
 </head>
 <body>
+<div class="probe" id="probe" data-liquid-ignore></div>
 <canvas id="scene" data-liquid-ignore></canvas>
 <main class="stage" id="stage">
   <video id="view" muted playsinline autoplay></video>
 </main>
-
 
 <div class="panel" id="panel">
   <div class="panel-inner" id="inner">
@@ -344,24 +341,19 @@
   </div>
 </div>
 
-
 <script src="https://cdn.jsdelivr.net/npm/gsap@3.15.1/dist/gsap.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/gsap@3.15.1/dist/Draggable.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/gsap@3.15.1/dist/InertiaPlugin.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/animejs@4.5.0/dist/bundles/anime.umd.min.js"></script>
 
-
 <script type="module">
   import liquidGL from "https://cdn.jsdelivr.net/npm/liquid-gl@3.0.0/liquidGL.js";
 
-
   gsap.registerPlugin(Draggable, InertiaPlugin);
-
 
   var animate = anime.animate;
   var stagger = anime.stagger;
   var createTimeline = anime.createTimeline;
-
 
   var $ = function (id) { return document.getElementById(id); };
   var stage = $('stage');
@@ -378,7 +370,6 @@
   var axes = { x: $('rx'), y: $('ry'), z: $('rz') };
   var keys = ['x', 'y', 'z'];
 
-
   var angle = { x: 0, y: 0, z: 0 };
   var motion = { factor: 1 };
   var intro = { scale: 0.86, alpha: 0, tilt: -6, text: 0 };
@@ -387,19 +378,22 @@
   var lens = null;
   var glass = { refraction: 0.02, bevelDepth: 0.1, magnify: 1, frost: 1.5 };
 
-
   if (!running) motion.factor = 0;
-
 
   var glOpts = { alpha: false, antialias: false, depth: false, stencil: false, powerPreference: 'high-performance' };
   var gl = canvas.getContext('webgl2', glOpts) || canvas.getContext('webgl', glOpts);
+  var isIOS = /iP(hone|ad|od)/.test(navigator.userAgent) ||
+              (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+  var isTouch = matchMedia('(pointer: coarse)').matches;
   var mirror = document.createElement('canvas');
+  mirror.setAttribute('data-liquid-ignore', '');
+  mirror.style.cssText = 'position:fixed;left:0;top:0;width:1px;height:1px;opacity:0;pointer-events:none';
+  document.body.appendChild(mirror);
   var mctx = mirror.getContext('2d', { alpha: false });
   var MIRROR_SCALE = 0.6;
   var rotBuf = new Float32Array(9);
   var isGL2 = typeof WebGL2RenderingContext !== 'undefined' && gl instanceof WebGL2RenderingContext;
   var dpr = 1;
-
 
   function shader(type, src) {
     var sh = gl.createShader(type);
@@ -409,7 +403,6 @@
     return sh;
   }
 
-
   function program(vs, fs) {
     var p = gl.createProgram();
     gl.attachShader(p, shader(gl.VERTEX_SHADER, vs));
@@ -417,7 +410,6 @@
     gl.linkProgram(p);
     return p;
   }
-
 
   var bgProg = program([
     'attribute vec2 a;',
@@ -441,7 +433,6 @@
     '  gl_FragColor = vec4(col, 1.0);',
     '}'
   ].join('\n'));
-
 
   var fishProg = program([
     'attribute vec2 a;',
@@ -467,16 +458,13 @@
     'void main() { gl_FragColor = texture2D(uTex, vUv) * uAlpha; }'
   ].join('\n'));
 
-
   var triBuf = gl.createBuffer();
   gl.bindBuffer(gl.ARRAY_BUFFER, triBuf);
   gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1, -1, 3, -1, -1, 3]), gl.STATIC_DRAW);
 
-
   var quadBuf = gl.createBuffer();
   gl.bindBuffer(gl.ARRAY_BUFFER, quadBuf);
   gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-0.5, -0.5, 0.5, -0.5, -0.5, 0.5, 0.5, 0.5]), gl.STATIC_DRAW);
-
 
   var bgU = {
     res: gl.getUniformLocation(bgProg, 'uRes'),
@@ -497,16 +485,28 @@
     a: gl.getAttribLocation(fishProg, 'a')
   };
 
-
   var tex = null;
   var aspect = 1;
   var picture = new Image();
+  function fitTexture(source) {
+    var max = Math.min(gl.getParameter(gl.MAX_TEXTURE_SIZE), 2048);
+    var w = source.naturalWidth, h = source.naturalHeight;
+    if (w <= max && h <= max) return source;
+    var k = max / Math.max(w, h);
+    var c = document.createElement('canvas');
+    c.width = Math.round(w * k);
+    c.height = Math.round(h * k);
+    c.getContext('2d').drawImage(source, 0, 0, c.width, c.height);
+    return c;
+  }
+
   picture.onload = function () {
     aspect = picture.naturalWidth / picture.naturalHeight;
+    var source = fitTexture(picture);
     tex = gl.createTexture();
     gl.bindTexture(gl.TEXTURE_2D, tex);
     gl.pixelStorei(gl.UNPACK_PREMULTIPLY_ALPHA_WEBGL, true);
-    gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, picture);
+    gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, source);
     gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
     gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
     gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
@@ -517,30 +517,30 @@
       gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
     }
   };
-  picture.src = 'pngtree-catfish-channel-fish-isolated-on-transparent-background-png-image_15814038.png';
-
+  picture.src = 'Bagre_bagre.png';
 
   var textTex = gl.createTexture();
   var tile = { w: 1, h: 1, dpr: 0 };
 
-
   function buildText() {
-    if (tile.dpr === dpr) return;
-    tile.dpr = dpr;
-    var size = 56 * dpr;
-    var gap = 44 * dpr;
+    var key = dpr + ':' + Math.round(Math.min(56, window.innerWidth * 0.1));
+    if (tile.dpr === key) return;
+    tile.dpr = key;
+    var css = Math.max(30, Math.min(56, window.innerWidth * 0.1));
+    var size = css * dpr;
+    var gap = css * 0.8 * dpr;
     var c = document.createElement('canvas');
     var ctx = c.getContext('2d');
     var font = '500 ' + size + 'px Geist, ui-sans-serif, system-ui, sans-serif';
     ctx.font = font;
-    var step = ctx.measureText('').width + gap;
+    var step = ctx.measureText('bagre').width + gap;
     var count = 6;
     c.width = Math.ceil(step * count);
     c.height = Math.round(size * 1.7);
     ctx.font = font;
     ctx.textBaseline = 'middle';
     ctx.fillStyle = '#000';
-    for (var i = 0; i < count; i++) ctx.fillText(' ', i * step + gap / 2, c.height / 2);
+    for (var i = 0; i < count; i++) ctx.fillText('bagre', i * step + gap / 2, c.height / 2);
     tile.w = c.width;
     tile.h = c.height;
     gl.bindTexture(gl.TEXTURE_2D, textTex);
@@ -552,16 +552,14 @@
     gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
   }
 
-
   function resize() {
-    dpr = Math.min(window.devicePixelRatio || 1, 1.5);
+    dpr = Math.min(window.devicePixelRatio || 1, window.innerWidth < 700 ? 2 : 1.5);
     canvas.width = Math.round(window.innerWidth * dpr);
     canvas.height = Math.round(window.innerHeight * dpr);
     mirror.width = Math.round(window.innerWidth * MIRROR_SCALE);
     mirror.height = Math.round(window.innerHeight * MIRROR_SCALE);
     buildText();
   }
-
 
   function rotation(x, y, z) {
     var r = Math.PI / 180;
@@ -574,7 +572,6 @@
     return mul(mul(Rx, Ry), Rz);
   }
 
-
   function mul(a, b) {
     var o = new Array(9);
     for (var c = 0; c < 3; c++) {
@@ -585,11 +582,9 @@
     return o;
   }
 
-
   function draw(time) {
     var w = canvas.width, h = canvas.height;
     gl.viewport(0, 0, w, h);
-
 
     gl.disable(gl.BLEND);
     gl.useProgram(bgProg);
@@ -606,17 +601,14 @@
     gl.uniform1i(bgU.text, 0);
     gl.drawArrays(gl.TRIANGLES, 0, 3);
 
-
     if (tex) drawFish(w, h);
     if (streaming) mctx.drawImage(canvas, 0, 0, mirror.width, mirror.height);
   }
-
 
   function drawFish(w, h) {
     var box = Math.min(Math.min(w, h) * 0.84, 920 * dpr) * intro.scale;
     var fw = aspect >= 1 ? box : box * aspect;
     var fh = aspect >= 1 ? box / aspect : box;
-
 
     gl.enable(gl.BLEND);
     gl.blendFunc(gl.ONE, gl.ONE_MINUS_SRC_ALPHA);
@@ -636,23 +628,40 @@
     gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
   }
 
-
   resize();
-  window.addEventListener('resize', resize);
+
+  var resizeTimer = null;
+  var lastSize = window.innerWidth + 'x' + window.innerHeight;
+  function onResize() {
+    clearTimeout(resizeTimer);
+    resizeTimer = setTimeout(function () {
+      var size = window.innerWidth + 'x' + window.innerHeight;
+      if (size === lastSize) return;
+      lastSize = size;
+      resize();
+      keepInside();
+    }, 120);
+  }
+  window.addEventListener('resize', onResize);
+  window.addEventListener('orientationchange', onResize);
+
+  canvas.addEventListener('webglcontextlost', function (e) { e.preventDefault(); });
+  canvas.addEventListener('webglcontextrestored', function () { location.reload(); });
   if (document.fonts && document.fonts.load) {
     document.fonts.load('500 56px Geist').then(function () { tile.dpr = 0; buildText(); });
   }
 
-
   var streaming = false;
   if (mirror.captureStream) {
     streaming = true;
-    view.srcObject = mirror.captureStream(60);
-    view.play().catch(function () {});
+    view.srcObject = mirror.captureStream(isIOS ? 30 : 60);
+    var kick = function () { if (view.paused) view.play().catch(function () {}); };
+    kick();
+    window.addEventListener('pointerdown', kick, { passive: true });
+    document.addEventListener('visibilitychange', function () { if (!document.hidden) kick(); });
   } else {
     view.remove();
   }
-
 
   function paint(s) {
     var p = (Number(s.value) - Number(s.min)) / (Number(s.max) - Number(s.min)) * 100;
@@ -662,7 +671,6 @@
     row.querySelector('output').textContent = Math.round(s.value) + '°/s';
     row.classList.toggle('on', Math.round(s.value) !== 0);
   }
-
 
   gsap.ticker.add(function (time, deltaTime) {
     var dt = Math.min(deltaTime, 100) / 1000 * motion.factor;
@@ -679,7 +687,6 @@
       lens.options.frost = glass.frost;
     }
   });
-
 
   function swapText(btn, text) {
     var span = btn.querySelector('span');
@@ -701,20 +708,17 @@
     });
   }
 
-
   function press(btn) {
     animate(btn, {
       scale: [{ to: 0.94, duration: 90, ease: 'outQuad' }, { to: 1, duration: 500, ease: 'outElastic(1, .5)' }]
     });
   }
 
-
   function wobble(strength) {
     gsap.timeline()
       .to(glass, { magnify: 1 + 0.04 * strength, bevelDepth: 0.1 + 0.05 * strength, duration: 0.18, ease: 'power2.out' })
       .to(glass, { magnify: 1, bevelDepth: 0.1, duration: 1.1, ease: 'elastic.out(1, 0.4)' });
   }
-
 
   function setRunning(value) {
     running = value;
@@ -726,9 +730,38 @@
     });
   }
 
+  function touchSlider(s) {
+    var active = null;
+    function setFrom(e) {
+      var r = s.getBoundingClientRect();
+      var p = Math.min(1, Math.max(0, (e.clientX - r.left) / r.width));
+      var min = Number(s.min), max = Number(s.max), step = Number(s.step) || 1;
+      var v = Math.round((min + p * (max - min)) / step) * step;
+      if (Math.abs(v) < step * 2) v = 0;
+      if (String(v) !== s.value) {
+        s.value = v;
+        s.dispatchEvent(new Event('input', { bubbles: true }));
+      }
+    }
+    s.addEventListener('pointerdown', function (e) {
+      if (e.pointerType === 'mouse') return;
+      e.preventDefault();
+      active = e.pointerId;
+      s.setPointerCapture(e.pointerId);
+      setFrom(e);
+    });
+    s.addEventListener('pointermove', function (e) {
+      if (e.pointerId === active) setFrom(e);
+    });
+    var end = function (e) { if (e.pointerId === active) active = null; };
+    s.addEventListener('pointerup', end);
+    s.addEventListener('pointercancel', end);
+    s.addEventListener('touchstart', function (e) { e.preventDefault(); }, { passive: false });
+  }
 
   keys.forEach(function (k) {
     var s = axes[k];
+    touchSlider(s);
     paint(s);
     s.addEventListener('input', function () {
       if (resetAnim) { resetAnim.pause(); resetAnim = null; motion.factor = running ? 1 : 0; }
@@ -745,10 +778,8 @@
     });
   });
 
-
   toggle.addEventListener('click', function () { press(toggle); wobble(0.6); setRunning(!running); });
   stage.addEventListener('click', function () { setRunning(!running); });
-
 
   document.addEventListener('keydown', function (e) {
     if (e.code === 'Space' && e.target.tagName !== 'BUTTON') {
@@ -757,10 +788,8 @@
     }
   });
 
-
   function norm(a) { return ((a % 360) + 360) % 360; }
   function nearestZero(a) { return norm(a) > 180 ? 360 : 0; }
-
 
   reset.addEventListener('click', function () {
     press(reset);
@@ -788,10 +817,8 @@
     });
   });
 
-
   var closed = false;
   var bars = collapse.querySelectorAll('span');
-
 
   collapse.addEventListener('click', function () {
     closed = !closed;
@@ -808,7 +835,6 @@
       ease: 'outExpo'
     });
     wobble(0.7);
-
 
     if (closed) {
       animate('.row, .foot', {
@@ -831,25 +857,29 @@
     }
   });
 
-
   var proxy = document.createElement('div');
   proxy.setAttribute('data-liquid-ignore', '');
   proxy.style.cssText = 'position:fixed;left:0;top:0;width:1px;height:1px;visibility:hidden;pointer-events:none';
   document.body.appendChild(proxy);
 
-
   var followX = gsap.quickTo(panel, 'left', { duration: 0.55, ease: 'power3.out' });
   var followY = gsap.quickTo(panel, 'top', { duration: 0.55, ease: 'power3.out' });
 
+  var probe = $('probe');
+  function safe() {
+    var cs = getComputedStyle(probe);
+    return { top: parseFloat(cs.paddingTop) || 0, bottom: parseFloat(cs.height) || 0 };
+  }
 
   function bounds() {
     var r = panel.getBoundingClientRect();
+    var sa = safe();
+    var m = window.innerWidth < 480 ? 12 : 10;
     return {
-      minX: 10, maxX: window.innerWidth - r.width - 10,
-      minY: 10, maxY: window.innerHeight - r.height - 10
+      minX: m, maxX: Math.max(m, window.innerWidth - r.width - m),
+      minY: m + sa.top, maxY: Math.max(m + sa.top, window.innerHeight - r.height - m - sa.bottom)
     };
   }
-
 
   function keepInside() {
     var r = panel.getBoundingClientRect();
@@ -858,12 +888,10 @@
     followY(Math.min(Math.max(b.minY, r.top), b.maxY));
   }
 
-
   function follow() {
     followX(this.x);
     followY(this.y);
   }
-
 
   Draggable.create(proxy, {
     type: 'x,y',
@@ -894,7 +922,6 @@
     }
   });
 
-
   inner.addEventListener('mouseenter', function () {
     gsap.to(glass, { frost: 0.6, duration: 0.6, ease: 'power2.out' });
   });
@@ -902,14 +929,13 @@
     gsap.to(glass, { frost: 1.5, duration: 0.8, ease: 'power2.out' });
   });
 
-
-  window.addEventListener('resize', keepInside);
-
-
-  gsap.set(panel, { left: 24, top: window.innerHeight - panel.offsetHeight - 24 });
+  var startMargin = window.innerWidth < 480 ? 12 : 24;
+  gsap.set(panel, {
+    left: window.innerWidth < 480 ? (window.innerWidth - panel.offsetWidth) / 2 : startMargin,
+    top: window.innerHeight - panel.offsetHeight - startMargin - safe().bottom
+  });
   paint(axes.x); paint(axes.y); paint(axes.z);
   toggle.querySelector('span').textContent = running ? 'pausar' : 'girar';
-
 
   createTimeline()
     .add(intro, {
@@ -939,13 +965,13 @@
       ease: 'outExpo'
     }, 450);
 
-
   function startGlass() {
     try {
       lens = liquidGL({
         target: '.panel',
         snapshot: 'body',
         resolution: 1,
+        engine: isIOS ? 'webgl2' : 'auto',
         refraction: 0.02,
         bevelDepth: 0.1,
         bevelWidth: 0.2,
@@ -969,7 +995,6 @@
       console.warn('liquidGL não iniciou:', err);
     }
   }
-
 
   window.addEventListener('load', function () {
     if (view.isConnected && view.readyState < 2) {
